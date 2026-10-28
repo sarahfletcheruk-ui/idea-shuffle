@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Idea Shuffle</title>
+<style>
+  :root {
+    --paper: #f4f0e8;
+    --ink: #20201e;
+    --muted: #777168;
+    --accent: #b34b36;
+    --line: #d7d0c4;
+    --card: #fbf9f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  .wrap { width: min(920px, 100%); margin: 0 auto; padding: 28px 22px 50px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .wordmark { font: 700 11px/1.2 Arial, sans-serif; text-transform: uppercase; letter-spacing: .19em; }
+  .count { color: var(--muted); font: 12px Arial, sans-serif; }
+  .intro { padding: 52px 0 28px; }
+  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .16em; font: 700 11px Arial, sans-serif; }
+  h1 { font-size: clamp(42px, 8vw, 76px); line-height: .96; letter-spacing: -.055em; font-weight: 400; margin: 14px 0 16px; }
+  .intro p { font: 15px/1.6 Arial, sans-serif; color: var(--muted); max-width: 470px; margin: 0; }
+  .stage { background: var(--card); border: 1px solid var(--line); min-height: 310px; padding: clamp(24px, 6vw, 58px); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+  .stage-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .tag { color: var(--accent); font: 700 10px Arial, sans-serif; text-transform: uppercase; letter-spacing: .16em; }
+  .number { color: var(--muted); font: 12px Arial, sans-serif; }
+  .idea { font-size: clamp(27px, 5vw, 46px); line-height: 1.13; letter-spacing: -.035em; max-width: 700px; margin: 38px 0 42px; overflow-wrap: anywhere; }
+  .stage-bottom { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+  button { cursor: pointer; border: 1px solid var(--ink); padding: 13px 18px; background: transparent; color: var(--ink); font: 700 12px Arial, sans-serif; letter-spacing: .04em; transition: background .15s, color .15s, transform .15s; }
+  button:hover { background: var(--ink); color: var(--paper); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  button.primary:hover { background: #8e3828; }
+  .small-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hint { font: 12px/1.5 Arial, sans-serif; color: var(--muted); }
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 20px 0 42px; flex-wrap: wrap; }
+  .controls-left { display: flex; gap: 8px; flex-wrap: wrap; }
+  .text-button { border: 0; padding: 8px 0; color: var(--muted); }
+  .text-button:hover { background: transparent; color: var(--accent); }
+  details { border-top: 1px solid var(--line); }
+  summary { cursor: pointer; padding: 20px 0; font: 700 12px Arial, sans-serif; letter-spacing: .07em; text-transform: uppercase; }
+  .list-tools { display: flex; gap: 10px; margin: 0 0 16px; }
+  input, select { background: var(--card); border: 1px solid var(--line); color: var(--ink); padding: 11px 12px; font: 13px Arial, sans-serif; min-width: 0; }
+  input { flex: 1; }
+  select { max-width: 200px; }
+  .ideas-list { list-style: none; padding: 0; margin: 0 0 26px; }
+  .ideas-list li { border-top: 1px solid var(--line); padding: 14px 0; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; }
+  .list-num { color: var(--muted); font: 11px Arial, sans-serif; padding-top: 3px; }
+  .list-title { font-size: 17px; line-height: 1.35; }
+  .pick { border: 0; padding: 4px 0 4px 8px; color: var(--accent); font: 700 10px Arial, sans-serif; }
+  .pick:hover { background: transparent; color: var(--ink); }
+  footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 26px; color: var(--muted); font: 11px/1.6 Arial, sans-serif; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  @media (max-width: 540px) {
+    .wrap { padding: 18px 16px 32px; }
+    .intro { padding-top: 38px; }
+    .stage { min-height: 330px; }
+    .stage-bottom { align-items: stretch; }
+    .stage-bottom > button { flex: 1; }
+    .controls { margin-bottom: 30px; }
+    .list-tools { flex-direction: column; }
+    select { max-width: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="wordmark">The Idea Shuffle</div>
+    <div class="count" id="countTop">42 ideas · one at a time</div>
+  </header>
+  <section class="intro">
+    <div class="eyebrow">A notebook for the next thing</div>
+    <h1>What should<br>you write?</h1>
+    <p>A shuffled deck of essay ideas, cultural obsessions, questions, and rabbit holes. Draw one when you need a starting point.</p>
+  </section>
+
+  <section class="stage" aria-live="polite">
+    <div class="stage-top">
+      <span class="tag" id="category">Culture & criticism</span>
+      <span class="number" id="number">IDEA 01</span>
+    </div>
+    <div class="idea" id="idea">Why do people prefer AI poetry to poetry written by humans?</div>
+    <div class="stage-bottom">
+      <button class="primary" id="shuffle">↻ &nbsp; Shuffle for an idea</button>
+      <div class="small-actions">
+        <button id="copy">Copy idea</button>
+        <button id="save">☆ Save</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="controls-left">
+      <button id="previous">← Previous</button>
+      <button id="next">Next →</button>
+    </div>
+    <div class="hint" id="status">Your next idea is one click away.</div>
+  </div>
+
+  <details>
+    <summary>Browse all ideas <span id="listCount"></span></summary>
+    <div class="list-tools">
+      <input id="search" type="search" placeholder="Search the list…" aria-label="Search ideas">
+      <select id="filter" aria-label="Filter by category">
+        <option value="all">All categories</option>
+      </select>
+    </div>
+    <ol class="ideas-list" id="ideasList"></ol>
+  </details>
+
+  <footer>
+    <span>Made for curiosity, not productivity.</span>
+    <span>Your ideas stay in this page; nothing is sent anywhere.</span>
+  </footer>
+</main>
+<script>
+const ideas = [
+  ["Why do people prefer AI poetry to poetry written by humans?", "AI & technology"],
+  ["AI in literature competitions and “suspicious reading”", "AI & technology"],
+  ["Was the early AI more uncanny and “creative”?", "AI & technology"],
+  ["Why is Oliver Reed so hot?", "Film & pop culture"],
+  ["AI Psychosis and negative symptoms vs positive symptoms of schizophrenia", "Mind & medicine"],
+  ["Investigation: Did they ever prescribe vibrators and cocaine for hysteria?", "Mind & medicine"],
+  ["Can films have “twists” in the age of social media?", "Film & pop culture"],
+  ["What is scary in a secular age? Religion and horror films.", "Film & pop culture"],
+  ["Why is rape bad? Everyone has a different answer", "Ethics & politics"],
+  ["The Theology of Gisele Pelicot", "Ethics & politics"],
+  ["Charli XCX, Music Fashion Film and “Post Music”", "Music & artists"],
+  ["How a Man Being Sued by the FTC Wants You to Have Childhood Trauma", "Internet & culture"],
+  ["The New Satanic Panic", "Internet & culture"],
+  ["The tech bro films are not scary enough", "Film & pop culture"],
+  ["On Total Eclipse of the Heart", "Music & artists"],
+  ["Autofiction and Kim by Eminem", "Books & poetry"],
+  ["Sylvia Plath and Confession Under Torture", "Books & poetry"],
+  ["On Oliver! the musical and innocence", "Film & pop culture"],
+  ["“True heterosexuality has never been tried”", "Sex & relationships"],
+  ["Has true crime replaced horror as a genre?", "Film & pop culture"],
+  ["Notes on the Ick", "Sex & relationships"],
+  ["Withnail and I, Shakespeare Sonnets, and Platonic Male Love (how women being educated almost killed a genre of romantic poetry)", "Books & poetry"],
+  ["Digital Surveillance and Monogamy", "Sex & relationships"],
+  ["Conservatives don't understand Girls", "Film & pop culture"],
+  ["The Pronatal Comedown in Pop Music", "Music & artists"],
+  ["Generative vs reproductive: tech and approaches to natalism", "AI & technology"],
+  ["“Pick me” has gone the way of “manic pixie dream girl”", "Internet & culture"],
+  ["The Doors, Hyacinth House, Herbert, Love, and Addiction", "Music & artists"],
+  ["Does Euphoria show that Christianity is seen as just faith-based redemption?", "Film & pop culture"],
+  ["Courtney Love and Hole on the Internet", "Music & artists"],
+  ["Courtney Love and Class: Why is she so resilient?", "Music & artists"],
+  ["Why are Amanda Palmer and Lena Dunham intrinsically cringe?", "Internet & culture"],
+  ["The Swifties ARE Taylor Swift; not even parasocial", "Internet & culture"],
+  ["John Berryman and the Booze Talking: Is it fair?", "Books & poetry"],
+  ["Could Robert Bly be the key to solving the manosphere?", "Ethics & politics"],
+  ["Inside the world of subliminals and living background lives", "Internet & culture"],
+  ["False Hope around Psychedelic Therapy; Nutt and Sessa", "Mind & medicine"],
+  ["I was a youth poet: reflections", "Books & poetry"],
+  ["Reflections on Red Scare, one decade on", "Internet & culture"],
+  ["Why do women artists only think about sex?", "Music & artists"],
+  ["Daddy vs Mommy States and Kink in Politics", "Ethics & politics"],
+  ["90s panic attacks: how have they been watered down? The feminising of panic attacks?", "Mind & medicine"],
+  ["Is all art “artificially intelligent”? On inspiration and the beyond", "AI & technology"],
+  ["History of deinstitutionalisation and why “reopen the asylums” means very little", "Mind & medicine"],
+  ["Tumblr and DDLG: how daddy got us in a chokehold", "Internet & culture"],
+  ["Does AA work better in America?", "Mind & medicine"],
+  ["Ranking versions of Mack the Knife", "Music & artists"],
+  ["Ranking versions of I Put a Spell on You", "Music & artists"],
+  ["Why I want the return of the sex comedy", "Film & pop culture"]
+].map((x, i) => ({id:i, title:x[0], category:x[1]}));
+
+let current = 0;
+let history = [0];
+let historyIndex = 0;
+let saved = new Set();
+let shuffledOrder = [...ideas.keys()];
+let shuffleCursor = 0;
+
+const $ = id => document.getElementById(id);
+function show(index, addHistory=true) {
+  current = index;
+  const item = ideas[index];
+  $("idea").textContent = item.title;
+  $("category").textContent = item.category;
+  $("number").textContent = `IDEA ${String(index+1).padStart(2,"0")}`;
+  $("save").textContent = saved.has(index) ? "★ Saved" : "☆ Save";
+  if (addHistory) {
+    history = history.slice(0, historyIndex+1);
+    history.push(index);
+    historyIndex = history.length-1;
+  }
+  $("status").textContent = saved.has(index) ? "Saved to your favourites." : "Your next idea is one click away.";
+  renderList();
+}
+function shuffle() {
+  if (ideas.length < 2) return;
+  let next;
+  do { next = Math.floor(Math.random() * ideas.length); } while (next === current);
+  show(next);
+}
+function renderList() {
+  const term = $("search").value.trim().toLowerCase();
+  const cat = $("filter").value;
+  const filtered = ideas.filter(x => (cat === "all" || x.category === cat) && x.title.toLowerCase().includes(term));
+  $("ideasList").innerHTML = "";
+  filtered.forEach((item, i) => {
+    const li = document.createElement("li");
+    const num = document.createElement("span"); num.className="list-num"; num.textContent=String(item.id+1).padStart(2,"0");
+    const title = document.createElement("span"); title.className="list-title"; title.textContent=item.title;
+    const pick = document.createElement("button"); pick.className="pick"; pick.textContent="DRAW ↗";
+    pick.addEventListener("click", () => { show(item.id); window.scrollTo({top:0,behavior:"smooth"}); });
+    li.append(num,title,pick); $("ideasList").appendChild(li);
+  });
+  $("listCount").textContent = `(${filtered.length})`;
+}
+const categories = [...new Set(ideas.map(x => x.category))].sort();
+categories.forEach(cat => { const opt=document.createElement("option"); opt.value=cat; opt.textContent=cat; $("filter").appendChild(opt); });
+$("countTop").textContent = `${ideas.length} ideas · one at a time`;
+$("shuffle").addEventListener("click", shuffle);
+$("next").addEventListener("click", shuffle);
+$("previous").addEventListener("click", () => {
+  if (historyIndex > 0) { historyIndex--; show(history[historyIndex], false); }
+  else $("status").textContent = "You're at the start of this session.";
+});
+$("copy").addEventListener("click", async () => {
+  const title = ideas[current].title;
+  try { await navigator.clipboard.writeText(title); $("status").textContent = "Copied to clipboard."; }
+  catch { $("status").textContent = title; }
+});
+$("save").addEventListener("click", () => {
+  if (saved.has(current)) saved.delete(current); else saved.add(current);
+  $("save").textContent = saved.has(current) ? "★ Saved" : "☆ Save";
+  $("status").textContent = saved.has(current) ? "Saved for this session." : "Removed from saved ideas.";
+});
+$("search").addEventListener("input", renderList);
+$("filter").addEventListener("change", renderList);
+renderList();
+</script>
+</body>
+</html>
