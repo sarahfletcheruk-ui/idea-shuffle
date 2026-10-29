@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What should Sarah develop today?</title>
+
 <style>
 * { box-sizing: border-box; }
 
@@ -58,8 +59,15 @@ select { max-width: 100%; }
   margin-bottom: 28px;
 }
 
-button { padding: 10px 16px; cursor: pointer; }
-button:hover { background: black; color: white; }
+button {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: black;
+  color: white;
+}
 
 #counter {
   color: #666;
@@ -81,9 +89,16 @@ input {
 }
 
 ol { padding-left: 24px; }
-li { padding: 7px 0; line-height: 1.35; }
 
-.category-note { color: #777; font-size: 14px; }
+li {
+  padding: 7px 0;
+  line-height: 1.35;
+}
+
+.category-note {
+  color: #777;
+  font-size: 14px;
+}
 
 footer {
   margin-top: 60px;
@@ -97,6 +112,7 @@ footer {
 }
 </style>
 </head>
+
 <body>
 <main>
   <h1>What should Sarah develop today?</h1>
@@ -174,13 +190,13 @@ const ideas = [
 ["Why I want the return of the sex comedy", "Film & pop culture"],
 ["The traumafication of anxiety", "Mind & medicine"],
 ["Why hasn’t Tori Amos got the reckoning Björk and Kate Bush have?", "Music & artists"],
-["What is the role of diagnosis? Private diagnoses etc w ADHD and autism"],
-["Chemical Imbalance as justification for certain medications"],  
-["the mother is the new haunted house],
-["The feeling that has no name: boredom, anxiety, and physical illness as the malaise of our time"], 
-["Ethics of babytrapping"], 
-["The belle de jour upper class woman and exposes in the times and telegraph"], 
-["The Bell Jar is a YA novel and that's fine", "Books & poetry"],
+["What is the role of diagnosis? Private diagnoses etc w ADHD and autism", "Mind & medicine"],
+["Chemical Imbalance as justification for certain medications", "Mind & medicine"],
+["The mother is the new haunted house", "Books & poetry"],
+["The feeling that has no name: boredom, anxiety, and physical illness as the malaise of our time", "Mind & medicine"],
+["Ethics of babytrapping", "Ethics & politics"],
+["The belle de jour upper class woman and exposes in the Times and Telegraph", "Film & pop culture"],
+["The Bell Jar is a YA novel and that's fine", "Books & poetry"]
 ];
 
 const categorySelect = document.getElementById("category");
@@ -191,31 +207,57 @@ const listEl = document.getElementById("all-ideas");
 
 let current = -1;
 
-[...new Set(ideas.map(item => item[1]))].sort().forEach(category => {
-  const option = document.createElement("option");
-  option.value = category;
-  option.textContent = category;
-  categorySelect.appendChild(option);
-});
+[...new Set(ideas.map(item => item[1]))]
+  .sort()
+  .forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
 
 function eligibleIdeas() {
   const category = categorySelect.value;
-  return ideas.map((idea, index) => ({ idea, index }))
-    .filter(item => category === "all" || item.idea[1] === category);
+
+  return ideas
+    .map((idea, index) => ({ idea, index }))
+    .filter(item =>
+      category === "all" || item.idea[1] === category
+    );
 }
 
 function drawIdea() {
   const options = eligibleIdeas();
+
   if (!options.length) return;
 
-  let alternatives = options.filter(item => item.index !== current);
-  if (!alternatives.length) alternatives = options;
+  let alternatives = options.filter(
+    item => item.index !== current
+  );
 
-  const choice = alternatives[Math.floor(Math.random() * alternatives.length)];
+  if (!alternatives.length) {
+    alternatives = options;
+  }
+
+  const choice =
+    alternatives[Math.floor(Math.random() * alternatives.length)];
+
   current = choice.index;
-
   ideaEl.textContent = choice.idea[0];
-  counterEl.textContent = `Idea ${current + 1} of ${ideas.length}`;
+
+  const category = categorySelect.value;
+
+  if (category === "all") {
+    counterEl.textContent =
+      `Idea ${current + 1} of ${ideas.length}`;
+  } else {
+    const position = options.findIndex(
+      item => item.index === current
+    );
+
+    counterEl.textContent =
+      `${category} · Idea ${position + 1} of ${options.length}`;
+  }
 }
 
 function renderList() {
@@ -237,7 +279,9 @@ function renderList() {
   });
 }
 
-document.getElementById("shuffle").addEventListener("click", drawIdea);
+document.getElementById("shuffle")
+  .addEventListener("click", drawIdea);
+
 categorySelect.addEventListener("change", drawIdea);
 searchEl.addEventListener("input", renderList);
 
